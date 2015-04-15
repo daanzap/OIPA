@@ -19,6 +19,11 @@ class ActivityFilter(BasicFilter):
         lookup_type='in',
         field='reporting_organisation'
     )
+    policy_marker = FilterField(
+        lookup_type='in',
+        field = 'policy_marker'
+    )
+
     min_total_budget = FilterField(lookup_type='gte', field='total_budget')
     max_total_budget = FilterField(lookup_type='lte', field='total_budget')
 
