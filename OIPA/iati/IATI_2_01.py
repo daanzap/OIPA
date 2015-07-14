@@ -5,6 +5,7 @@ from iati.deleter import Deleter
 from iati_synchroniser.exception_handler import exception_handler
 
 
+
 import dateutil.parser
 
 
@@ -54,6 +55,7 @@ class Parse(XMLParser):
                 return None
         return valid_date
 
+
     def add_organisation(self, elem):
         try:
             ref = elem.attrib['ref']
@@ -97,7 +99,6 @@ class Parse(XMLParser):
 
         except Exception as e:
             print e
-
 
 
     def add_narrative(self,element,parent):
@@ -859,6 +860,7 @@ class Parse(XMLParser):
             value = 0
         model.value = element.text
         model.value_date = self.validate_date(element.attrib.get('value-date'))
+
         model.currency  = self.cached_db_call(models.Currency,element.attrib.get('currency'))
          
         return element
@@ -1524,6 +1526,7 @@ class Parse(XMLParser):
     def iati_activities__iati_activity__crs_add__loan_terms__commitment_date(self,element):
         model = self.get_func_parent_model()
         model.commitment_date = self.validate_date(element.attrib.get('iso-date'))
+
         return element
 
     '''atributes:
@@ -1534,6 +1537,7 @@ class Parse(XMLParser):
         model = self.get_func_parent_model()
         model.repayment_first_date = self.validate_date(element.attrib.get('iso-date'))
 
+
     '''atributes:
     iso-date:2020-12-31
 
@@ -1541,6 +1545,7 @@ class Parse(XMLParser):
     def iati_activities__iati_activity__crs_add__loan_terms__repayment_final_date(self,element):
         model = self.get_func_parent_model()
         model.repayment_final_date = self.validate_date(element.attrib.get('iso-date'))
+
         return element
 
     '''atributes:
@@ -1556,6 +1561,7 @@ class Parse(XMLParser):
         crs_loan_status.year = element.attrib.get('year')
         crs_loan_status.currency = self.cached_db_call(models.Currency,element.attrib.get('currency'))
         crs_loan_status.value_date =  self.validate_date(element.attrib.get('value-date'))
+
         self.set_func_model(crs_loan_status)
         return element
 
@@ -1603,6 +1609,7 @@ class Parse(XMLParser):
         fss.activity = model
         fss.year = element.attrib.get('phaseout-year')
         fss.extraction_date = self.validate_date(element.attrib.get('extraction-date'))
+
         self.set_func_model(fss)
         return element
 
@@ -1618,6 +1625,7 @@ class Parse(XMLParser):
         fss_forecast.ffs = model
         fss_forecast.year = element.attrib.get('year')
         fss_forecast.value_date = self.validate_date(element.attrib.get('value-date'))
+
         fss_forecast.currency = self.cached_db_call(models.Currency,element.attrib.get('currency'))
         return element
 

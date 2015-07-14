@@ -12,10 +12,12 @@ import re
 from iati_synchroniser.exception_handler import exception_handler
 
 
+
 class XMLParser(object):
 
     VERSION = '2.01'  #overwrite for older versions
     xml_source_ref =''
+
     logged_functions = []
     hints = []
     errors = []
@@ -26,7 +28,6 @@ class XMLParser(object):
     DB_CACHE_LIMIT = 30 #overwrite in subclass if you want more/less 
 
 
-   
 
     def testWithExampleFile(self):
         self.testWithFile("activity-standard-example-annotated_105.xml")
@@ -42,7 +43,7 @@ class XMLParser(object):
         
         self.root = root
         print root.attrib.get('version')
-        #exit
+
         self.parse(root)
         self.save_all_models()
 
@@ -186,7 +187,7 @@ class XMLParser(object):
         model_name = model.__name__
         codelist_iati_version = self.VERSION
         #print model_name
-        print str(key)+' is the key'
+
         if model_name in self.db_call_cache:
             model_cache = self.db_call_cache[model_name]
             if key in model_cache:

@@ -129,6 +129,7 @@ class Deleter():
             exception_handler(e, cur_activity.id, "remove_values_for_activity")
 
 
+
     def remove_values_for_activity(self, cur_activity):
 
         try:
@@ -150,6 +151,7 @@ class Deleter():
                 models.ContactInfoOrganisation.objects.filter(ContactInfo=contact_info).delete()
                 models.ContactInfoMailingAddress.objects.filter(ContactInfo=contact_info).delete()
                 models.ContactInfoJobTitle.objects.filter(ContactInfo=contact_info).delete()
+
                
                 contact_info.delete()
 
@@ -159,6 +161,7 @@ class Deleter():
                 models.TransactionProvider.objects.filter(transaction=trans).delete()
                 models.TransactionSector.objects.filter(transaction=trans).delete()
                 models.TransactionReciever.objects.filter(transaction=trans).delete()
+
 
             models.Transaction.objects.filter(activity=cur_activity).delete()
             models.PlannedDisbursement.objects.filter(activity=cur_activity).delete()
