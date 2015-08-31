@@ -147,15 +147,14 @@ class ActivityAggregationSerializer(BaseSerializer):
             "serializer": TiedStatusSerializer,
             "fields": (), # has default fields
         },
-        "budgets_by_year": {
+        "budget_per_year": {
             "field": "year",
             "extra": { 
-                "year": "EXTRACT(YEAR FROM 'period_start')",
+                'year': 'EXTRACT(YEAR FROM "period_start")::integer',
             },
             "queryset": None,
             "serializer": None,
             "fields": None,
-            # "subquery": "SELECT * FROM geodata_country WHERE geodata_country.code = recipient_country",
         },
 
     }
@@ -166,7 +165,12 @@ class ActivityAggregationSerializer(BaseSerializer):
         # todo: limit order_by fields
 
         allowed_orderings = self._allowed_orderings + aggregationList
+        allowed_orderings = allowed_orderings + ['-' + o for o in allowed_orderings]
+
         orderings = self._intersection(allowed_orderings, orderList)
+
+        # exclude null values of grouped field
+        # excludes = { i.replace("-","") + "__isnull": True for i in orderings }
 
         if (len(orderings)):
             return queryset.order_by(*orderings)
@@ -192,9 +196,6 @@ class ActivityAggregationSerializer(BaseSerializer):
         groupFields = [ grouping["field"] for grouping in groupings.values() ]
         groupExtras = { "select" : grouping["extra"] for grouping in groupings.values() if "extra" in grouping }
 
-        print(groupings)
-        print(groupFields)
-        print(groupExtras)
         # apply extras
         # for grouping in groupings:
         first_queryset = first_queryset.extra(**groupExtras)
