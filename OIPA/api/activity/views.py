@@ -1,7 +1,7 @@
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import ListAPIView
 from rest_framework.generics import RetrieveAPIView, GenericAPIView
-from rest_framework.serializers import BaseSerializer
+from rest_framework.serializers import BaseSerializer, ValidationError
 from iati.models import Activity
 from api.activity import serializers as activitySerializers
 from api.activity import filters
@@ -80,7 +80,6 @@ class ActivityAggregationSerializer(BaseSerializer):
             "queryset": Country.objects.all(),
             "serializer": CountrySerializer,
             "fields": ('url', 'code', 'name'),
-            # "subquery": "SELECT * FROM geodata_country WHERE geodata_country.code = recipient_country",
         },
         "recipient_region": {
             "field": "recipient_region",
@@ -148,6 +147,17 @@ class ActivityAggregationSerializer(BaseSerializer):
             "serializer": TiedStatusSerializer,
             "fields": (), # has default fields
         },
+        "budgets_by_year": {
+            "field": "year",
+            "extra": { 
+                "year": "EXTRACT(YEAR FROM 'period_start')",
+            },
+            "queryset": None,
+            "serializer": None,
+            "fields": None,
+            # "subquery": "SELECT * FROM geodata_country WHERE geodata_country.code = recipient_country",
+        },
+
     }
 
     _allowed_orderings = [ i['field'] for i in _allowed_groupings.values()]
@@ -158,12 +168,8 @@ class ActivityAggregationSerializer(BaseSerializer):
         allowed_orderings = self._allowed_orderings + aggregationList
         orderings = self._intersection(allowed_orderings, orderList)
 
-        print(orderings)
-
         if (len(orderings)):
             return queryset.order_by(*orderings)
-        # else: 
-        #     return queryset.order_by(*self._intersection(allowed_orderings, groupList))
 
         return queryset
 
@@ -182,7 +188,19 @@ class ActivityAggregationSerializer(BaseSerializer):
             first_annotations[a['annotate_name']] = a['annotate']
      
         # aggregations that can be performed in the same query (hence require no extra filters)
-        result = first_queryset.values(*groupList).annotate(**first_annotations)
+        groupings = { group: self._allowed_groupings[group] for group in groupList }
+        groupFields = [ grouping["field"] for grouping in groupings.values() ]
+        groupExtras = { "select" : grouping["extra"] for grouping in groupings.values() if "extra" in grouping }
+
+        print(groupings)
+        print(groupFields)
+        print(groupExtras)
+        # apply extras
+        # for grouping in groupings:
+        first_queryset = first_queryset.extra(**groupExtras)
+
+        # Apply group_by calls and annotations
+        result = first_queryset.values(*groupFields).annotate(**first_annotations)
 
         # aggregations that require extra filters, and hence must be exectued separately
         for aggregation in separate_aggregations:
@@ -225,32 +243,32 @@ class ActivityAggregationSerializer(BaseSerializer):
             fields = self._allowed_groupings[grouping]["fields"]
             foreignQueryset = self._allowed_groupings[grouping]["queryset"]
 
-            if fields:
-                data = serializer(foreignQueryset, 
-                    context={
-                        'request': request,
-                    },
-                    many=True,
-                    fields=fields,
-                    query_field="%s_fields" % (field_name),
-                ).data
-            else: 
-                data = serializer(foreignQueryset, 
-                    context={
-                        'request': request,
-                    },
-                    many=True,
-                ).data
+            if serializer:
 
-            serializers[grouping] = { i.get('code'):i for i in data }
+                if fields:
+                    data = serializer(foreignQueryset, 
+                        context={
+                            'request': request,
+                        },
+                        many=True,
+                        fields=fields,
+                        query_field="%s_fields" % (field_name),
+                    ).data
+                else: 
+                    data = serializer(foreignQueryset, 
+                        context={
+                            'request': request,
+                        },
+                        many=True,
+                    ).data
+
+                serializers[grouping] = { i.get('code'):i for i in data }
 
         results = valuesQuerySet
 
         for i, result in enumerate(results):
             for k,v in result.iteritems():
                 if k in groupList:
-                    # print(k)
-                    print(serializers.get(k, {}))
                     result[k] = serializers.get(k, {}).get(str(v))
 
         return results
@@ -265,11 +283,7 @@ class ActivityAggregationSerializer(BaseSerializer):
         aggregations = self._intersection(filter(None,params.get('aggregations', "").split(',')), self._aggregations.keys())
 
         if not (len(group_by) and len(aggregations)):
-            return Response(
-                'Provide both group_by and aggregations', 
-                status.HTTP_404_NOT_FOUND,
-            )
-
+            raise ValidationError("Please provides suitable 'group_by' and 'aggregations' fields")
 
         # queryset = self.apply_group_filters(queryset, request, group_by)
         queryset = self.apply_order_filters(queryset, order_by, group_by, aggregations) 
@@ -291,9 +305,6 @@ class ActivityAggregations(GenericAPIView):
 
     filter_backends = (SearchFilter, DjangoFilterBackend, OrderingFilter,)
     filter_class = filters.ActivityFilter
-    # serializer_class = activitySerializers.AggregationSerializer
-    # fields = ('url', 'id', 'title', 'total_budget')
-    # pagination_serializer_class = AggregationsPaginationSerializer
 
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())

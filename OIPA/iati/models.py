@@ -124,7 +124,7 @@ class FileFormat(models.Model):
 
 
 class FinanceTypeCategory(models.Model):
-    code = models.IntegerField(primary_key=True)
+    code = models.CharField(max_length=100, primary_key=True)
     name = models.CharField(max_length=50)
     description = models.TextField()
 
@@ -133,7 +133,7 @@ class FinanceTypeCategory(models.Model):
 
 
 class FinanceType(models.Model):
-    code = models.IntegerField(primary_key=True)
+    code = models.CharField(max_length=100, primary_key=True)
     name = models.CharField(max_length=220)
     category = models.ForeignKey(FinanceTypeCategory)
 
@@ -142,7 +142,7 @@ class FinanceType(models.Model):
 
 
 class FlowType(models.Model):
-    code = models.IntegerField(primary_key=True)
+    code = models.CharField(max_length=100, primary_key=True)
     name = models.CharField(max_length=150)
     description = models.TextField()
 
@@ -270,7 +270,7 @@ class ResultType(models.Model):
 
 # DAC-3 sectors: http://iatistandard.org/201/codelists/SectorCategory/
 class SectorCategory(models.Model):
-    code = models.IntegerField(primary_key=True)
+    code = models.CharField(max_length=100, primary_key=True)
     name = models.CharField(max_length=100)
     description = models.TextField()
 
@@ -279,7 +279,7 @@ class SectorCategory(models.Model):
 
 # DAC-5 sectors: http://iatistandard.org/201/codelists/Sector/
 class Sector(models.Model):
-    code = models.IntegerField(primary_key=True)
+    code = models.CharField(max_length=100, primary_key=True)
     name = models.CharField(max_length=100)
     description = models.TextField()
     category = models.ForeignKey(SectorCategory, null=True, default=None)

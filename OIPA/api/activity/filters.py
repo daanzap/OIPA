@@ -103,11 +103,11 @@ class ActivityFilter(TogetherFilterSet):
     hierarchy = CommaSeparatedCharFilter(lookup_type='in', name='hierarchy')
     
     # Nescessary for removing activities which fail these filters
-    related_activity_id = CommaSeparatedCharFilter(lookup_type='in', name='current_activity__current_activity__id')
+    related_activity_id = CommaSeparatedCharFilter(lookup_type='in', name='current_activity__related_activity__id')
     related_activity_type = CommaSeparatedCharFilter(lookup_type='in', name='current_activity__type__code')
-    related_activity_recipient_country = CommaSeparatedCharFilter(lookup_type='in', name='current_activity__current_activity__recipient_country')
-    related_activity_recipient_region = CommaSeparatedCharFilter(lookup_type='in', name='current_activity__current_activity__recipient_region')
-    related_activity_sector = CommaSeparatedCharFilter(lookup_type='in', name='current_activity__current_activity__sector')
+    related_activity_recipient_country = CommaSeparatedCharFilter(lookup_type='in', name='current_activity__related_activity__recipient_country')
+    related_activity_recipient_region = CommaSeparatedCharFilter(lookup_type='in', name='current_activity__related_activity__recipient_region')
+    related_activity_sector = CommaSeparatedCharFilter(lookup_type='in', name='current_activity__related_activity__sector')
 
     budget_period_start = DateFilter(lookup_type='gte', name='budget__period_start')
     budget_period_end = DateFilter(lookup_type='lte', name='budget__period_end')
