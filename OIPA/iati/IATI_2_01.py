@@ -133,6 +133,7 @@ class Parse(XMLParser):
         self.default_lang = activity.default_lang
         activity.hierarchy = element.attrib.get('hierarchy')
         activity.xml_source_ref = self.xml_source_ref
+        activity.id = self.iati_identifier
         self.set_func_model(activity)
         if 'default-currency' in element.attrib:
             activity.default_currency = self.cached_db_call(models.Currency, element.attrib.get('default-currency'))

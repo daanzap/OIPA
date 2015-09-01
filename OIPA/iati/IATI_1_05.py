@@ -209,7 +209,7 @@ class Parse(IATI_201_Parser):
         activityParticipatingOrganisation.activity = model
         activityParticipatingOrganisation.type = self.cached_db_call(models.OrganisationType,element.attrib.get('type'))
         activityParticipatingOrganisation.role = self.cached_db_call(models.OrganisationRole, element.attrib.get('role'))
-
+        activityParticipatingOrganisation.save()
         self.add_narrative_105(element.text,activityParticipatingOrganisation)
         #store element 
         return element
