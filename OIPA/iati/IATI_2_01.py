@@ -56,9 +56,9 @@ class Parse(XMLParser):
 
     def add_organisation(self, elem):
         try:
-            ref = elem.attrib['ref']
+            ref = elem.attrib.get('ref')
             org_ref = ref
-            type_ref = elem.attrib['type']
+            type_ref = elem.attrib.get('type')
             name = None
             for e in elem:
                 name = e.text
