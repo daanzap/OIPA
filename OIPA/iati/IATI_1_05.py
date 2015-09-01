@@ -318,6 +318,7 @@ class Parse(IATI_201_Parser):
         reciever_org = self.add_organisation(element)
         transaction_receiver = models.TransactionReciever()
         transaction_receiver.transaction = model
+        transaction_receiver.organisation = reciever_org
         self.add_narrative_105(element.text,transaction_receiver)
         #store element 
         return element
