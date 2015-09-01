@@ -133,7 +133,10 @@ class Parse(XMLParser):
         self.default_lang = activity.default_lang
         activity.hierarchy = element.attrib.get('hierarchy')
         activity.xml_source_ref = self.xml_source_ref
-        activity.id = self.iati_identifier
+        activity_id = self.iati_identifier.replace("/", "-")
+        activity_id = activity_id.replace(":", "-")
+        activity_id = activity_id.replace(" ", "")
+        activity.id = activity_id
         activity.save()
         self.set_func_model(activity)
         if 'default-currency' in element.attrib:
@@ -245,7 +248,7 @@ class Parse(XMLParser):
         model = self.get_func_parent_model()
         org = self.add_organisation(element)
         activityParticipatingOrganisation = models.ActivityParticipatingOrganisation()
-        activityParticipatingOrganisation.org = org
+        activityParticipatingOrganisation.organisation = org
         activityParticipatingOrganisation.activity = model
         activityParticipatingOrganisation.type = self.cached_db_call(models.OrganisationType,element.attrib.get('type'))
         activityParticipatingOrganisation.role = self.cached_db_call(models.OrganisationRole, element.attrib.get('role'))
