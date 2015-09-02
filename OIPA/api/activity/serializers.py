@@ -581,4 +581,3 @@ class ActivitySerializer(DynamicFieldsModelSerializer):
             'results',
             'locations'
         )
-        
