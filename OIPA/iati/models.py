@@ -910,13 +910,10 @@ class Location(models.Model):
     @property
     def point(self):
         if self.point_pos:
-            coo = self.point_pos.split(' ')
+            coo = self.point_pos.strip().split('  ')
             return Point(float(coo[0]), float(coo[1]))
         else:
             return Point(float(self.latitude), float(self.longitude))
-
-    def __unicode__(self,):
-        return "%s - %s" % (self.activity, self.name)
 
 
 class Ffs(models.Model):
