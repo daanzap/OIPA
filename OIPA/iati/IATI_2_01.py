@@ -1212,7 +1212,7 @@ class Parse(XMLParser):
             ref_activities = models.RelatedActivity.objects.filter(ref=model.iati_identifier).update(related_activity=model)
         except:
             pass
-        related_activity .related_activity = related_activity
+        related_activity.related_activity = related_activity
         related_activity.save()
         return element
 
