@@ -1201,6 +1201,7 @@ class Parse(XMLParser):
         related_activity.current_activity = model
         related_activity.type = self.cached_db_call(models.RelatedActivityType,element.attrib.get('code'))
         related_activity.ref = element.attrib.get('ref')
+        related_activity.save()
         return element
 
     '''atributes:
