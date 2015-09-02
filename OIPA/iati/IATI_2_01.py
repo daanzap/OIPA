@@ -1201,6 +1201,18 @@ class Parse(XMLParser):
         related_activity.current_activity = model
         related_activity.type = self.cached_db_call(models.RelatedActivityType,element.attrib.get('code'))
         related_activity.ref = element.attrib.get('ref')
+        ref = element.attrib.get('ref')
+        try:
+            related_activity = models.Activity.objects.get(iati_identifier=ref)
+        except :
+            related_activity = None
+
+        # update existing related activitiy foreign keys
+        try:
+            ref_activities = models.RelatedActivity.objects.filter(ref=model.iati_identifier).update(related_activity=model)
+        except:
+            pass
+        related_activity .related_activity = related_activity
         related_activity.save()
         return element
 
