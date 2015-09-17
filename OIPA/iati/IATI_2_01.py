@@ -19,6 +19,7 @@ class Parse(XMLParser):
     default_lang = 'en'
     iati_identifier = ''
     validated_reporters = ['GB-1', 'NL-1', 'all-other-known-reporting-orgs']
+    iati_source = None
 
     def __init__(self, *args, **kwargs):
         self.test = 'blabla'
