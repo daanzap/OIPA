@@ -754,7 +754,7 @@ class ActivityPolicyMarker(models.Model):
 class ActivitySector(models.Model):
     activity = models.ForeignKey(Activity)
     sector = models.ForeignKey(Sector, null=True, default=None)
-    vocabulary = models.ForeignKey(Vocabulary, null=True, default=None)
+    vocabulary = models.ForeignKey(SectorVocabulary, null=True, default=None)
     percentage = models.DecimalField(
         max_digits=5,
         decimal_places=2,

@@ -25,11 +25,13 @@
                     	{{result.object.id}}
                     {% elif result.model_name == 'activityrecipientcountry' %}
                     	{{result.object.activity.id}} {{result.object.country.name}}
+                    {% elif result.model_name == 'activityrecipientregion' %}
+                    	{{result.object.activity.id}} {{result.object.region.name}}
                     {% elif result.model_name == 'documentlink' %}
                     	{{result.object.activity.id}} {{result.object.url}} 
                     	{% for title in result.object.documentlinktitles.all %}{% for narrative in title.narratives.all %}{{narrative.content}} {% endfor %}{% endfor%}
                 	{% else %}
-                		{% for narrative in result.object.narratives.all  %} {{narrative.content}} {% endfor %}
+                		{{result.object.activity.id}} {% for narrative in result.object.narratives.all  %} {{narrative.content}} {% endfor %}
                 	{% endif %}
                 	</a>
                 </p>

@@ -755,8 +755,13 @@ class Parse(XMLParser):
         model = self.get_func_parent_model()
         activity_sector = models.ActivitySector()
         activity_sector.activity = model
-        activity_sector.sector = self.cached_db_call(models.Sector,element.attrib.get('code'))
-        activity_sector.vocabulary = self.cached_db_call(models.SectorVocabulary,element.attrib.get('vocabulary'))
+        activity_sector.sector = self.cached_db_call_no_version(models.Sector,element.attrib.get('code'))
+        vocabulary = self.cached_db_call(models.SectorVocabulary,element.attrib.get('vocabulary'))
+        if vocabulary == None:
+            vocabulary_id = '1'
+        else:
+            vocabulary_id =vocabulary.id
+        activity_sector.vocabulary_id = vocabulary_id
         activity_sector.percentage =  element.attrib.get('percentage')
         activity_sector.save()
          

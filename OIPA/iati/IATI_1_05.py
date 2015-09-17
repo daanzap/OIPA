@@ -205,20 +205,27 @@ class Parse(IATI_201_Parser):
         return element
 
 
-    # '''atributes:
-    # code:111
-    # vocabulary:DAC
+    '''atributes:
+    code:111
+    vocabulary:DAC
 
-    # tag:sector'''
-    # def iati_activities__iati_activity__sector(self,element):
-    #     model = self.get_func_parent_model()
-    #     sector = models.Sector()
-    #     sector.activity = model
-    #     sector.code = element.attrib.get('code')
-    #     sector.vocabulary = self.cached_db_call(models.Vocabulary,self.sector_vocabulary_trans.get(element.attrib.get('vocabulary')))
-    #     sector.save()
-         
-    #     return element
+    tag:sector'''
+    def iati_activities__iati_activity__sector(self,element):
+        print 'in sector!!!!!'
+        model = self.get_func_parent_model()
+        sector = models.ActivitySector()
+        sector.activity = model
+        sector.code = element.attrib.get('code')
+        vocabulary = self.cached_db_call(models.SectorVocabulary,self.sector_vocabulary_trans(element.attrib.get('vocabulary')))
+        if vocabulary == None:
+            vocabulary_id = '1'
+        else:
+            vocabulary_id =vocabulary.id
+        sector.vocabulary_id = vocabulary_id
+        sector.percentage =  element.attrib.get('percentage')
+        sector.save()
+        print 'before sector!!!!!'
+        return element
 
     '''atributes:
 
