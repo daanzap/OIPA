@@ -1,35 +1,51 @@
-<h2>Search</h2>
+{% extends 'base.html' %}
 
-<form method="get" action="">
-    <table>
-        {{ form.as_table }}
-        <tr>
-            <td>&nbsp;</td>
-            <td>
-                <input type="submit" value="Search">
-            </td>
-        </tr>
-    </table>
+{% block content %}
+    <h2>Search</h2>
 
-    {% if query %}
-        <h3>Results</h3>
+    <form method="get" action=".">
+        <table>
+            {{ form.as_table }}
+            <tr>
+                <td>&nbsp;</td>
+                <td>
+                    <input type="submit" value="Search">
+                </td>
+            </tr>
+        </table>
 
-        {% for result in page.object_list %}
-            <p>
-                <a href="{{ result.object.get_absolute_url }}">{{ result.object.iatiactivitytitle_set.all.0.title }}</a>
-            </p>
-        {% empty %}
-            <p>No results found.</p>
-        {% endfor %}
+        {% if query %}
+            <h3>Results</h3>
 
-        {% if page.has_previous or page.has_next %}
-            <div>
-                {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
-                |
-                {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
-            </div>
+            {% for result in page.object_list %}
+                <p>
+                	
+                    {{result.model_name}} : <a href="{{ result.object.get_absolute_url }}">
+                    {% if result.model_name == 'activity' %}
+                    	{{result.object.id}}
+                    {% elif result.model_name == 'activityrecipientcountry' %}
+                    	{{result.object.activity.id}} {{result.object.country.name}}
+                    {% elif result.model_name == 'documentlink' %}
+                    	{{result.object.activity.id}} {{result.object.url}} 
+                    	{% for title in result.object.documentlinktitles.all %}{% for narrative in title.narratives.all %}{{narrative.content}} {% endfor %}{% endfor%}
+                	{% else %}
+                		{% for narrative in result.object.narratives.all  %} {{narrative.content}} {% endfor %}
+                	{% endif %}
+                	</a>
+                </p>
+            {% empty %}
+                <p>No results found.</p>
+            {% endfor %}
+
+            {% if page.has_previous or page.has_next %}
+                <div>
+                    {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+                    |
+                    {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            {# Show some example queries to run, maybe query syntax, something else? #}
         {% endif %}
-    {% else %}
-        {# Show some example queries to run, maybe query syntax, something else? #}
-    {% endif %}
-</form>
+    </form>
+{% endblock %}

@@ -22,7 +22,8 @@ urlpatterns = patterns(
     url(r'', include('two_factor.urls', 'two_factor')),
     url(r'^$',
         RedirectView.as_view(url='/home', permanent=True),
-        name='index')
+        name='index'),
+    (r'^search/', include('haystack.urls')),
 )
 
 if settings.DEBUG:

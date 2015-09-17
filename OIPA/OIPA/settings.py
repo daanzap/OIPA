@@ -148,6 +148,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.gis',
+    'haystack',
     'iati',
     'iati_synchroniser',
     'geodata',
@@ -167,6 +168,7 @@ INSTALLED_APPS = (
     'two_factor',
     'debug_toolbar',
     'parse_logger',
+
 )
 
 SUIT_CONFIG = {
@@ -220,6 +222,14 @@ REST_FRAMEWORK = {
         'rest_framework.filters.DjangoFilterBackend',
         # 'rest_framework.filters.SearchFilter',
     )
+}
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'haystack',
+    },
 }
 
 try:

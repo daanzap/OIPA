@@ -14,6 +14,10 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.fields import GenericRelation
 
 
+#function for making url
+def make_abs_url(iati_identifier):
+    return '/api/activities/'+iati_identifier
+
 class Language(models.Model):
     code = models.CharField(primary_key=True, max_length=2)
     name = models.CharField(max_length=80)
@@ -40,6 +44,11 @@ class Narrative(models.Model):
     language = models.ForeignKey(Language, null=True, default=None)
     iati_identifier = models.CharField(max_length=150,verbose_name='iati_identifier',null=True)
     content = models.TextField(null=True,blank=True)
+    
+    def get_absolute_url(self):
+        return make_abs_url(self.iati_identifier)
+
+
 
 class ActivityDateType(models.Model):
     code = models.CharField(primary_key=True, max_length=20)
@@ -695,6 +704,9 @@ class Activity(models.Model):
     class Meta:
         verbose_name_plural = "activities"
 
+    def get_absolute_url(self):
+        return make_abs_url(self.id)
+
 
 class ActivitySearchData(models.Model):
     activity = models.OneToOneField(Activity)
@@ -721,6 +733,8 @@ class ActivityParticipatingOrganisation(models.Model):
 
     def __unicode__(self,):
         return "%s: %s - %s" % (self.activity.id, self.organisation, self.name)
+    def get_absolute_url(self):
+        return make_abs_url(self.activity.id)
 
 
 class ActivityPolicyMarker(models.Model):
@@ -750,6 +764,9 @@ class ActivitySector(models.Model):
     def __unicode__(self,):
         return "%s - %s" % (self.activity.id, self.sector)
 
+    def get_absolute_url(self):
+        make_abs_url(self.activity.id)
+
 
 class ActivityRecipientCountry(models.Model):
     activity = models.ForeignKey(Activity)
@@ -762,6 +779,9 @@ class ActivityRecipientCountry(models.Model):
 
     def __unicode__(self,):
         return "%s - %s" % (self.activity.id, self.country)
+
+    def get_absolute_url(self):
+        return make_abs_url(self.activity.id)
 
 
 class CountryBudgetItem(models.Model):
@@ -796,6 +816,9 @@ class ActivityRecipientRegion(models.Model):
 
     def __unicode__(self,):
         return "%s - %s" % (self.activity.id, self.region)
+
+    def get_absolute_url(self):
+        return make_abs_url(self.activity.id)
 
 
 class OtherIdentifierType(models.Model):
@@ -920,15 +943,19 @@ class DocumentLink(models.Model):
     def __unicode__(self,):
         return "%s - %s" % (self.activity.id, self.url)
 
+    def get_absolute_url(self):
+        return make_abs_url(self.activity.id)
+
 # TODO: enforce one-to-one
 class DocumentLinkTitle(models.Model):
-    document_link = models.ForeignKey(DocumentLink)
+    document_link = models.ForeignKey(DocumentLink,related_name='documentlinktitles')
     narratives = GenericRelation(Narrative)
 
 class Result(models.Model):
     activity = models.ForeignKey(Activity)
     result_type = models.ForeignKey(ResultType, null=True, default=None)
     aggregation_status = models.BooleanField(default=False)
+    narratives = GenericRelation(Narrative)
 
     def __unicode__(self,):
         return "%s - %s" % (self.activity.id, self.title)
@@ -1014,6 +1041,9 @@ class Title(models.Model):
 
     def __unicode__(self,):
         return "Title: %s" % (self.activity.id,)
+    
+    def get_absolute_url(self):
+        return make_abs_url(self.activity.id)
 
 
 class Description(models.Model):
@@ -1028,6 +1058,8 @@ class Description(models.Model):
 
     def __unicode__(self,):
         return "Description: %s - %s" % (self.activity.id, self.type)
+    def get_absolute_url(self):
+        return make_abs_url(self.activity.id)
 
 
 class Budget(models.Model):
