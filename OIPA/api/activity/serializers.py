@@ -29,7 +29,7 @@ class DocumentLinkSerializer(serializers.ModelSerializer):
 
     format = FileFormatSerializer(source='file_format')
     category = DocumentCategorySerializer(source='categories', many=True)
-    title = TitleSerializer(source="documentlinktitle_set")
+    title = TitleSerializer(source="documentlinktitles")
 
     class Meta:
         model = iati.models.DocumentLink
@@ -328,7 +328,7 @@ class ActivityRecipientRegionSerializer(DynamicFieldsModelSerializer):
         fields = (
             'region',
             'percentage',
-            'vocabulary',
+            'region_vocabulary',
         )
 
 

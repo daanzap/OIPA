@@ -1195,7 +1195,12 @@ class Location(models.Model):
     @property
     def point(self):
         if self.point_pos:
-            coo = self.point_pos.strip().split(' ')
+            temp_arr = self.point_pos.strip().split(' ')
+            coo = []
+            for val in temp_arr:
+                if val != '':
+                    coo.append(val)
+
             return list( Point(float(coo[0]), float(coo[1])) )
         else:
             return list( Point(float(self.latitude), float(self.longitude)) )

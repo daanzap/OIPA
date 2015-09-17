@@ -27,6 +27,8 @@
                     	{{result.object.activity.id}} {{result.object.country.name}}
                     {% elif result.model_name == 'activityrecipientregion' %}
                     	{{result.object.activity.id}} {{result.object.region.name}}
+                    {% elif result.model_name == 'activityparticipatingorganisation' %}
+                    	{{result.object.activity.id}} {{result.object.organisation.name}}
                     {% elif result.model_name == 'documentlink' %}
                     	{{result.object.activity.id}} {{result.object.url}} 
                     	{% for title in result.object.documentlinktitles.all %}{% for narrative in title.narratives.all %}{{narrative.content}} {% endfor %}{% endfor%}
