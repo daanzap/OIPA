@@ -10,7 +10,7 @@ for activty_id in test_lang:
 
 print 'added ids'
 
-activities = Activity.objects.filter(pk__in=activity_ids)
+activities = Activity.objects.filter(pk__in=list(activity_ids))
 print 'search complete'
 for activity in activities:
     print activity.id
