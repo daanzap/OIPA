@@ -36,7 +36,7 @@ class TitleIndex(indexes.SearchIndex, indexes.Indexable):
 
 class ActivityIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
-    
+    lang = indexes.CharField(model_attr='default_lang')
 
     def get_model(self):
         return Activity
