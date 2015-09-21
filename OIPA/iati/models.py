@@ -1036,7 +1036,7 @@ class ResultIndicatorPeriodActualComment(models.Model):
 
 
 class Title(models.Model):
-    activity = models.ForeignKey(Activity)
+    activity = models.ForeignKey(Activity, related_name="titles")
     narratives = GenericRelation(Narrative)
 
     def __unicode__(self,):
@@ -1047,7 +1047,7 @@ class Title(models.Model):
 
 
 class Description(models.Model):
-    activity = models.ForeignKey(Activity)
+    activity = models.ForeignKey(Activity,related_name='descriptions')
     narratives = GenericRelation(Narrative)
 
     type = models.ForeignKey(

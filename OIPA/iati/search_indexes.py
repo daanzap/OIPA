@@ -12,32 +12,35 @@ from models import Narrative,Description,Title,Activity,ActivityRecipientCountry
 #         """Used when the entire index for model is updated."""
 #         return self.get_model().objects.all()
 
-class DesriptionIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.CharField(document=True, use_template=True)
+# class DesriptionIndex(indexes.SearchIndex, indexes.Indexable):
+#     text = indexes.CharField(document=True, use_template=True)
     
 
-    def get_model(self):
-        return Description
+#     def get_model(self):
+#         return Description
 
-    def index_queryset(self, using=None):
-        """Used when the entire index for model is updated."""
-        return self.get_model().objects.all()
+#     def index_queryset(self, using=None):
+#         """Used when the entire index for model is updated."""
+#         return self.get_model().objects.all()
 
-class TitleIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.CharField(document=True, use_template=True)
+# class TitleIndex(indexes.SearchIndex, indexes.Indexable):
+#     text = indexes.CharField(document=True, use_template=True)
     
 
-    def get_model(self):
-        return Title
+#     def get_model(self):
+#         return Title
 
-    def index_queryset(self, using=None):
-        """Used when the entire index for model is updated."""
-        return self.get_model().objects.all()
+#     def index_queryset(self, using=None):
+#         """Used when the entire index for model is updated."""
+#         return self.get_model().objects.all()
 
 class ActivityIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     lang = indexes.CharField(model_attr='default_lang')
-
+    title = indexes.CharField(use_template=True)
+    description = indexes.CharField(use_template=True)
+    recipient_country = indexes.CharField(use_template=True)
+    reporting_organisation = indexes.CharField(use_template=True)
     def get_model(self):
         return Activity
 
@@ -45,60 +48,60 @@ class ActivityIndex(indexes.SearchIndex, indexes.Indexable):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
 
-class ActivityRecipientCountryIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.CharField(document=True, use_template=True)
+# class ActivityRecipientCountryIndex(indexes.SearchIndex, indexes.Indexable):
+#     text = indexes.CharField(document=True, use_template=True)
     
 
-    def get_model(self):
-        return ActivityRecipientCountry
+#     def get_model(self):
+#         return ActivityRecipientCountry
 
-    def index_queryset(self, using=None):
-        """Used when the entire index for model is updated."""
-        return self.get_model().objects.all()
+#     def index_queryset(self, using=None):
+#         """Used when the entire index for model is updated."""
+#         return self.get_model().objects.all()
 
-class ActivityRecipientRegionIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.CharField(document=True, use_template=True)
+# class ActivityRecipientRegionIndex(indexes.SearchIndex, indexes.Indexable):
+#     text = indexes.CharField(document=True, use_template=True)
     
 
-    def get_model(self):
-        return ActivityRecipientRegion
+#     def get_model(self):
+#         return ActivityRecipientRegion
 
-    def index_queryset(self, using=None):
-        """Used when the entire index for model is updated."""
-        return self.get_model().objects.all()
+#     def index_queryset(self, using=None):
+#         """Used when the entire index for model is updated."""
+#         return self.get_model().objects.all()
 
-class ActivitySectorIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.CharField(document=True, use_template=True)
+# class ActivitySectorIndex(indexes.SearchIndex, indexes.Indexable):
+#     text = indexes.CharField(document=True, use_template=True)
     
 
-    def get_model(self):
-        return ActivitySector
+#     def get_model(self):
+#         return ActivitySector
 
-    def index_queryset(self, using=None):
-        """Used when the entire index for model is updated."""
-        return self.get_model().objects.all()
+#     def index_queryset(self, using=None):
+#         """Used when the entire index for model is updated."""
+#         return self.get_model().objects.all()
 
-class ActivityParticipatingOrganisationIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.CharField(document=True, use_template=True)
+# class ActivityParticipatingOrganisationIndex(indexes.SearchIndex, indexes.Indexable):
+#     text = indexes.CharField(document=True, use_template=True)
     
 
-    def get_model(self):
-        return ActivityParticipatingOrganisation
+#     def get_model(self):
+#         return ActivityParticipatingOrganisation
 
-    def index_queryset(self, using=None):
-        """Used when the entire index for model is updated."""
-        return self.get_model().objects.all()
+#     def index_queryset(self, using=None):
+#         """Used when the entire index for model is updated."""
+#         return self.get_model().objects.all()
 
-class DocumentLinkIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.CharField(document=True, use_template=True)
+# class DocumentLinkIndex(indexes.SearchIndex, indexes.Indexable):
+#     text = indexes.CharField(document=True, use_template=True)
     
 
-    def get_model(self):
-        return DocumentLink
+#     def get_model(self):
+#         return DocumentLink
 
-    def index_queryset(self, using=None):
-        """Used when the entire index for model is updated."""
-        return self.get_model().objects.all()
+#     def index_queryset(self, using=None):
+#         """Used when the entire index for model is updated."""
+#         return self.get_model().objects.all()
 
 
 

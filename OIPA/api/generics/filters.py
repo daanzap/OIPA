@@ -1,6 +1,7 @@
 from rest_framework import filters
 from django.db.models.sql.constants import QUERY_TERMS
 from django_filters import CharFilter
+from haystack.query import SearchQuerySet
 
 VALID_LOOKUP_TYPES = sorted(QUERY_TERMS)
 
@@ -9,6 +10,10 @@ class SearchFilter(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         query = request.query_params.get('q', None)
         if query:
+            activity_ids = SearchQuerySet().filter(text=query).values_list('pk',flat=True)[0:3000000]
+            print 'in search'
+            print activity_ids
+            return queryset.filter(pk__in=activity_ids)
             query_fields = request.query_params.get('q_fields')
             if query_fields:
                 query_fields = query_fields.split(',')

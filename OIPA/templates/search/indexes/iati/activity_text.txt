@@ -1,3 +1,10 @@
 {{ object.iati_identifier }} {{ object.id }}
 {{ object.reporting_organisation.abbreviation }} {{ object.reporting_organisation.name }}  {{ object.reporting_organisation.code }} {{ object.reporting_organisation.original_ref }}
 
+{% for title in object.titles.all %}
+{% for narrative in title.narratives.all %}{{narrative.content}}  {% endfor %}
+{% endfor %}
+
+{% for description in object.descriptions.all %}
+{% for narrative in description.narratives.all %}{{narrative.content}}  {% endfor %}
+{% endfor %}
