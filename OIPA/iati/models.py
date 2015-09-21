@@ -932,7 +932,7 @@ class RelatedActivity(models.Model):
 
 
 class DocumentLink(models.Model):
-    activity = models.ForeignKey(Activity)
+    activity = models.ForeignKey(Activity,related_name='documentlinks')
     url = models.TextField(max_length=500)
     file_format = models.ForeignKey(FileFormat, null=True, default=None)
     categories = models.ManyToManyField(
