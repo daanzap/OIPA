@@ -11,8 +11,9 @@ test_lang = SearchQuerySet().filter(lang='en').values_list('pk',flat=True)
 elapsed = time.clock()
 elapsed = elapsed - start
 print "Time spent in search elastic is: ", elapsed
-activity_ids = list(test_lang)
-#print activity_ids
+print test_lang
+#activity_ids = list(test_lang)
+print activity_ids
 # start = time.clock()
 # i = 0
 # #print test_lang
@@ -27,7 +28,7 @@ activity_ids = list(test_lang)
 
 print 'added ids'
 start = time.clock() 
-activities = Activity.objects.filter(pk__in=activity_ids)
+activities = Activity.objects.filter(pk__in=test_lang)
 elapsed = time.clock()
 elapsed = elapsed - start
 print "Time spent in (function name) is: ", elapsed
