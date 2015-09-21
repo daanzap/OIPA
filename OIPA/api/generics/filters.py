@@ -19,7 +19,7 @@ class SearchFilter(filters.BaseFilterBackend):
                     filter_dict[query_field] = query
             else:
                 filter_dict = {'text':query}
-            activity_ids = SearchQuerySet().filter(**filter_dict).values_list('pk',flat=True)[:]
+            activity_ids = SearchQuerySet().filter(**filter_dict).values_list('pk',flat=True)[:3000000]
             return queryset.filter(pk__in=activity_ids)
         return queryset.all()
 
