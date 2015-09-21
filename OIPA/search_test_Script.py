@@ -31,10 +31,10 @@ print "Time spent in adding "+str(i)+" ids is: ", elapsed
 
 print 'added ids'
 start = time.clock() 
-activities = Activity.objects.filter(pk__in=activity_ids)
+activities = Activity.objects.filter(pk__in=activity_ids).all()
 elapsed = time.clock()
 elapsed = elapsed - start
-print "Time spent in (function name) is: ", elapsed
+print "Time spent in gettting objects is: ", elapsed
 print 'search complete'
 print 'done!!!'
 print len(activities)
