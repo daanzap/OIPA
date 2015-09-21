@@ -17,7 +17,9 @@ start = time.clock()
 i = 0
 gc.disable()
 #print test_lang
-for activty_id in test_lang:
+print type(test_lang)
+for activty_id in test_lang[1:]:
+	#print type(activty_id)
 	#print activty_id
    	activity_ids.append(activty_id)
    	i = i+1
@@ -29,7 +31,7 @@ print "Time spent in adding "+str(i)+" ids is: ", elapsed
 
 print 'added ids'
 start = time.clock() 
-activities = Activity.objects.filter(pk__in=list(activity_ids))
+activities = Activity.objects.filter(pk__in=activity_ids)
 elapsed = time.clock()
 elapsed = elapsed - start
 print "Time spent in (function name) is: ", elapsed
