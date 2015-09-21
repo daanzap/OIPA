@@ -10,12 +10,17 @@ class SearchFilter(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         query = request.query_params.get('q', None)
         if query:
-            activity_ids = SearchQuerySet().filter(text=query).values_list('pk',flat=True)[0:3000000]
-            return queryset.filter(pk__in=activity_ids)
+            
             query_fields = request.query_params.get('q_fields')
             if query_fields:
                 query_fields = query_fields.split(',')
-            return queryset.search(query, query_fields)
+                filter_dict = {}
+                for query_field in query_fields:
+                    filter_dict[query_field] = query
+            else:
+                filter_dict = {'text':query}
+            activity_ids = SearchQuerySet().filter(**filter_dict).values_list('pk',flat=True)[:]
+            return queryset.filter(pk__in=activity_ids)
         return queryset.all()
 
 
