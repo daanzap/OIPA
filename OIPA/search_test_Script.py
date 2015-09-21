@@ -18,7 +18,7 @@ i = 0
 gc.disable()
 #print test_lang
 print type(test_lang)
-for activty_id in test_lang[1:]:
+for activty_id in test_lang[1:2000]:
 	#print type(activty_id)
 	#print activty_id
    	activity_ids.append(activty_id)
