@@ -17,6 +17,7 @@ i = 0
 for activty_id in test_lang:
     activity_ids.append(activty_id.pk)
     i = i+1
+
 elapsed = time.clock()
 elapsed = elapsed - start
 print "Time spent in adding "+str(i)+" ids is: ", elapsed    
