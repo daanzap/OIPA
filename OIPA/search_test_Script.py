@@ -7,13 +7,13 @@ import time
 
 print 'before search'
 start = time.clock() 
-test_lang = SearchQuerySet().filter(lang='en').values_list('pk',flat=True)
+test_lang = SearchQuerySet().filter(lang='en').values_list('pk',flat=True).load_all()
 elapsed = time.clock()
 elapsed = elapsed - start
 print "Time spent in search elastic is: ", elapsed
 print test_lang
 #activity_ids = list(test_lang)
-print activity_ids
+#print activity_ids
 # start = time.clock()
 # i = 0
 # #print test_lang
