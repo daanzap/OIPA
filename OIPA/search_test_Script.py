@@ -12,7 +12,4 @@ print 'added ids'
 
 activities = Activity.objects.filter(pk__in=list(activity_ids))
 print 'search complete'
-for activity in activities:
-    print activity.id
-
 print 'done!!!'
