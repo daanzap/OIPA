@@ -10,12 +10,12 @@ class SearchFilter(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         query = request.query_params.get('q', None)
         if query:
-            
+            search_queryset = SearchQuerySet()
             query_fields = request.query_params.get('q_fields')
             if query_fields:
                 query_fields = query_fields.split(',')
                 
-                search_queryset = SearchQuerySet()
+                
                 for query_field in query_fields:
                     filter_dict = {query_field:query}
                     search_queryset = search_queryset.filter_or(**filter_dict)
