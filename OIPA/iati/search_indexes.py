@@ -56,6 +56,7 @@ class ActivityIndex(indexes.SearchIndex, indexes.Indexable):
     sector = indexes.CharField(use_template=True)
     documentlink_title = indexes.CharField(use_template=True)
     participating_org = indexes.CharField(use_template=True)
+    last_updated =  indexes.DateTimeField(model_attr='last_updated')
 
     def get_model(self):
         return Activity
@@ -63,6 +64,9 @@ class ActivityIndex(indexes.SearchIndex, indexes.Indexable):
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
+
+    def get_updated_field(self):
+    	return 'last_updated'
 
 # class ActivityRecipientCountryIndex(indexes.SearchIndex, indexes.Indexable):
 #     text = indexes.CharField(document=True, use_template=True)

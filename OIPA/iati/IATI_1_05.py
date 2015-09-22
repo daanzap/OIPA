@@ -216,10 +216,11 @@ class Parse(IATI_201_Parser):
         sector = models.ActivitySector()
         sector.activity = model
         sector.code = element.attrib.get('code')
-        vocabulary = self.cached_db_call(models.SectorVocabulary,self.sector_vocabulary_trans(element.attrib.get('vocabulary')))
-        if vocabulary == None:
+        
+        if element.attrib.get('vocabulary') == None:
             vocabulary_id = '1'
         else:
+            vocabulary = self.cached_db_call(models.SectorVocabulary,self.sector_vocabulary_trans[element.attrib.get('vocabulary')])
             vocabulary_id =vocabulary.id
         sector.vocabulary_id = vocabulary_id
         sector.percentage =  element.attrib.get('percentage')

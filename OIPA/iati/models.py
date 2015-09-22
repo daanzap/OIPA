@@ -653,6 +653,7 @@ class Activity(models.Model):
     default_currency = models.ForeignKey(Currency, null=True, default=None, related_name="default_currency")
     hierarchy = models.SmallIntegerField(choices=hierarchy_choices, default=1, null=True)
     last_updated_datetime = models.CharField(max_length=100, default="")
+    last_updated = models.DateTimeField(null=True,auto_now=True)
     default_lang = models.CharField(max_length=2)
     linked_data_uri = models.CharField(max_length=100, default="")
     reporting_organisation = models.ForeignKey(

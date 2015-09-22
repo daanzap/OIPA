@@ -174,7 +174,7 @@ class XMLParser(object):
         errExceptionStr = errorStr+"\n"+str(traceback.format_exc())+"\n"
         for attr in element.attrib :
             errExceptionStr = errExceptionStr+" "+attr+" = "+element.attrib.get(attr)+"\n"
-        if element.text != '':
+        if element.text != None and element.text != '':
             errExceptionStr = errExceptionStr+element.text
         self.errors.append(errExceptionStr)
         log_entry = logModels.ParseLog()

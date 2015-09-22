@@ -1081,8 +1081,8 @@ class Parse(XMLParser):
         transaction_provider = models.TransactionProvider()
         transaction_provider.transaction = model
         transaction_provider.organisation = provider_org
-        self.set_func_model(transaction_provider)
         model.provider_organisation = transaction_provider
+        self.set_func_model(transaction_provider)
         return element
 
     '''atributes:
