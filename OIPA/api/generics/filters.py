@@ -21,10 +21,7 @@ class SearchFilter(filters.BaseFilterBackend):
                     search_queryset = search_queryset.filter_or(**filter_dict)
             else:
                 search_queryset = search_queryset.filter_or(text=query)
-
-            activity_ids_result = search_queryset.values_list('pk',flat=True)
-            activity_ids = []
-            activity_ids.extend(activity_ids_result[0:3000000])
+            activity_ids = search_queryset.values_list('pk',flat=True)[:3000000]
             return queryset.filter(pk__in=activity_ids)
         return queryset.all()
 
