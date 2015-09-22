@@ -24,7 +24,7 @@ class SearchFilter(filters.BaseFilterBackend):
 
             activity_ids_result = search_queryset.values_list('pk',flat=True)
             activity_ids = []
-            activity_ids.extend(activity_ids_result)
+            activity_ids.extend(activity_ids_result[0:3000000])
             return queryset.filter(pk__in=activity_ids)
         return queryset.all()
 
