@@ -8,18 +8,12 @@ import gc
 
 print 'before search'
 start = time.clock() 
-test_lang = SearchQuerySet().filter(text='GB').values_list('pk',flat=True)
+test_lang = SearchQuerySet().filter(text='GB').values_list('pk',flat=True).stats_results()
 elapsed = time.clock()
 elapsed = elapsed - start
 print "Time spent in search elastic is: ", elapsed
 
-start = time.clock()
-gc.disable()
-activity_ids = list(test_lang[:3000000])
-gc.enable()
-elapsed = time.clock()
-elapsed = elapsed - start
-print "Time spent in converting ids is: ", elapsed    
+
 
 start = time.clock()
 gc.disable()
@@ -29,6 +23,14 @@ gc.enable()
 elapsed = time.clock()
 elapsed = elapsed - start
 print "Time spent in converting ids new way  is: ", elapsed    
+
+start = time.clock()
+gc.disable()
+activity_ids = list(test_lang[:3000000])
+gc.enable()
+elapsed = time.clock()
+elapsed = elapsed - start
+print "Time spent in converting ids is: ", elapsed    
 
 print 'added ids'
 start = time.clock() 

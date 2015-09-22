@@ -21,7 +21,7 @@ class SearchFilter(filters.BaseFilterBackend):
                     search_queryset = search_queryset.filter_or(**filter_dict)
             else:
                 search_queryset = search_queryset.filter_or(text=query)
-            activity_ids_result = search_queryset.values_list('pk',flat=True)
+            activity_ids_result = search_queryset.values_list('pk',flat=True).stats_results()
             activity_ids = []
             activity_ids.extend(activity_ids_result)
             return queryset.filter(pk__in=activity_ids)
