@@ -5,8 +5,7 @@ from mock import MagicMock
 from lxml.etree import Element
 
 from iati.models import AidType
-from iati.models import AidTypeCategory
-from iati.models import Country
+
 from iati_synchroniser.codelist_importer import CodeListImporter
 from iati.factory import iati_factory
 
@@ -56,6 +55,7 @@ class CodelistImporterTestCase(TestCase):
         """
 
         # category should already be in the db
+
         aidTypeCategory = iati_factory.AidTypeCategoryFactory.create(code='A')
 
         element = Element('aidType')
