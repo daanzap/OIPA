@@ -225,7 +225,6 @@ class CodeListImporter():
             + version.replace('.','') +
             "/codelists/downloads/clv2/codelist.xml")
 
-
         file_opener = urllib2.build_opener()
         xml_file = file_opener.open(downloaded_xml)
         context = etree.iterparse(xml_file, tag='codelist')

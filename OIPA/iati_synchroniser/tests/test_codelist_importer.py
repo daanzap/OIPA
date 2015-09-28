@@ -55,7 +55,6 @@ class CodelistImporterTestCase(TestCase):
         """
 
         # category should already be in the db
-
         aidTypeCategory = iati_factory.AidTypeCategoryFactory.create(code='A')
 
         element = Element('aidType')
