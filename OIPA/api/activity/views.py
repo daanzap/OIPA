@@ -452,16 +452,22 @@ class ActivityList(ListAPIView):
 
     Searching is performed on fields:
 
-    - `id`
+    - `activity_id`
     - `title`
-    - `total_budget`
+    - `description`
+    - `country`
+    - `reporting_org` 
+    - `region`
+    - `sector`
+    - `documentlink_title`
+    - `participating_org`
 
     ## Result details
 
     Each item contains summarized information on the activity being shown,
     including the URI to activity details. To show more information, go to the
-    activity's detail page or select any field using the `fields` parameter on the list. Example;
-    `fields=url,id,title,recipient_countries,any_field`.
+    activity's detail page or select any field using the `q_fields` parameter on the list. Example;
+    `q_fields=activity_id,title,country,any_field`.
 
 
     """
@@ -469,7 +475,8 @@ class ActivityList(ListAPIView):
     filter_backends = (SearchFilter, DjangoFilterBackend, OrderingFilter,)
     filter_class = filters.ActivityFilter
     serializer_class = activitySerializers.ActivitySerializer
-    fields = ('url', 'id', 'title', 'total_budget')
+
+    fields = ('url', 'id', 'title', 'total_budget',)
     pagination_class = AggregationsPaginationSerializer
 
     # def get_serializer_context(self):

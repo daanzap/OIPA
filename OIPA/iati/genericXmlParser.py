@@ -68,6 +68,8 @@ class XMLParser(object):
         if(send_mail):
             print 'sending mail'
             for developer in User.objects.filter(groups__name='developers').all():
+                print 'in developer loop'
+                print developer.email
                 self.sendErrorMail(developer.email, hintsStr +"\n"+errorStr)
 
     def testWithFile(self,fileName):

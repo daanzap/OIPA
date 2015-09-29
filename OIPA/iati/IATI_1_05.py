@@ -213,18 +213,19 @@ class Parse(IATI_201_Parser):
     def iati_activities__iati_activity__sector(self,element):
         print 'in sector!!!!!'
         model = self.get_func_parent_model()
-        sector = models.ActivitySector()
-        sector.activity = model
-        sector.code = element.attrib.get('code')
-        
+        activity_sector = models.ActivitySector()
+        activity_sector.activity = model
+        activity_sector.code = element.attrib.get('code')
+        activity_sector.sector = self.cached_db_call_no_version(models.Sector,element.attrib.get('code'))
+
         if element.attrib.get('vocabulary') == None:
             vocabulary_id = '1'
         else:
-            vocabulary = self.cached_db_call(models.SectorVocabulary,self.sector_vocabulary_trans[element.attrib.get('vocabulary')])
+            vocabulary = self.cached_db_call_no_version(models.SectorVocabulary,self.sector_vocabulary_trans[element.attrib.get('vocabulary')])
             vocabulary_id =vocabulary.id
-        sector.vocabulary_id = vocabulary_id
-        sector.percentage =  element.attrib.get('percentage')
-        sector.save()
+        activity_sector.vocabulary_id = vocabulary_id
+        activity_sector.percentage =  element.attrib.get('percentage')
+        activity_sector.save()
         print 'before sector!!!!!'
         return element
 
