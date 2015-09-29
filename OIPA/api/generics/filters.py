@@ -26,8 +26,8 @@ class SearchFilter(filters.BaseFilterBackend):
             gc.disable()
             activity_ids = search_queryset.values_list('pk',flat=True)[:3000000]
             gc.enable()
-            return queryset.filter(pk__in=activity_ids)
-        return queryset.all()
+            return queryset.filter(pk__in=activity_ids).filter(is_searchable=True)
+        return queryset.all().filter(is_searchable=True)
 
 
 class FilterField(object):

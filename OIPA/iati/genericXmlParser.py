@@ -47,7 +47,7 @@ class XMLParser(object):
     def load_and_parse(self, root):
         
         self.root = root
-        print root.attrib.get('version')
+        #print root.attrib.get('version')
         #exit
         self.parse(root)
         self.save_all_models()

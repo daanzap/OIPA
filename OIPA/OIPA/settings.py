@@ -233,6 +233,8 @@ HAYSTACK_CONNECTIONS = {
 }
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
+ROOT_ORGANISATIONS = []
+
 try:
     from local_settings import *
 except ImportError:

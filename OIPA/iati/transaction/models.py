@@ -39,11 +39,11 @@ class Transaction(models.Model):
 
     provider_organisation = models.ForeignKey(
         'TransactionProvider',
-        related_name="transaction_receiver_activity",
+        related_name="transaction_provider_org",
         null=True)
     receiver_organisation = models.ForeignKey(
         'TransactionReceiver',
-        related_name="transaction_receiver_activity",
+        related_name="transaction_receiver_org",
         null=True)
 
     tied_status = models.ForeignKey('TiedStatus', null=True, default=None)
@@ -70,7 +70,9 @@ class TransactionDescription(models.Model):
     transaction = models.ForeignKey(Transaction)
 
 
-# TO DO; below 3 models are unnecessary imo -> they're just orgs and sectors
+# these moddels are here to provide narrative possibilities
+# a narrative needs it's own Object
+
 class TransactionProvider(models.Model):
     transaction = models.ForeignKey(Transaction)
     organisation = models.ForeignKey(

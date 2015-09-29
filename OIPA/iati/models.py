@@ -698,6 +698,7 @@ class Activity(models.Model):
     has_conditions = models.BooleanField(default=True)
 
     objects = ActivityQuerySet.as_manager()
+    is_searchable = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.id
@@ -1339,3 +1340,9 @@ class LegacyData(models.Model):
 
     def __unicode__(self):
         return "%s" % self.name
+
+# class ActivityHierarchy(models.Model):
+#     provider_activity = models.ForeignKey(Activity,relate_name='receiver_activities',null=True)
+#     recieving_activity = models.ForeignKey(Activity,relate_name='providing_activities',null=True)
+#     provider_activity_identifier = models.CharField(max_length=50)
+#     receiving_activity_identifier = models.CharField(max_length=50)

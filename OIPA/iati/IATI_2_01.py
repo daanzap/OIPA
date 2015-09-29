@@ -9,6 +9,8 @@ import dateutil.parser
 import time
 import datetime
 import re
+from django.conf import settings
+
 
 _slugify_strip_re = re.compile(r'[^\w\s-]')
 _slugify_hyphenate_re = re.compile(r'[-\s]+')
@@ -20,6 +22,8 @@ class Parse(XMLParser):
     iati_identifier = ''
     validated_reporters = ['GB-1', 'NL-1', 'all-other-known-reporting-orgs']
     iati_source = None
+    current_transaction = None
+    searchable_activities = []
 
     def __init__(self, *args, **kwargs):
         self.test = 'blabla'
@@ -80,6 +84,23 @@ class Parse(XMLParser):
                 exception_handler(e, "validate date", "validate_date")
                 return None
         return valid_date
+
+    """
+        sets all the children to searchable 
+        recursivly calls itself but keeps a list of already set activities
+    """
+    def set_children_readable(self,iati_identifier):
+        print 'in set children readable '+iati_identifier
+        child_transactions = models.Transaction.objects.filter(provider_activity_id=iati_identifier)
+        for transaction in child_transactions:
+            if not transaction.activity_id in self.searchable_activities:
+                print activity.id+'  is id in set searchable'
+                activity =  transaction.activity
+                activity.is_searchable = True
+                activity.save()
+                self.set_children_readable(activity.iati_identifier)
+        return
+
 
     def add_organisation(self, elem, is_reporting_org=False):
         """
@@ -186,13 +207,15 @@ class Parse(XMLParser):
         activity.xml_source_ref = self.iati_source.ref
         activity.last_updated_datetime = self.validate_date(element.attrib.get('last-updated-datetime'))
         activity_id = element.xpath('iati-identifier/text()')[0]
-
+        if len(settings.ROOT_ORGANISATIONS) > 0:
+            activity.is_searchable = False
         activity_id = activity_id.replace(":", "-")
         activity_id = activity_id.replace(" ", "")
         activity.id = activity_id
         self.activity_id = activity_id
-        print activity_id+'is the activty ID'
+        #print activity_id+'is the activty ID'
         activity.save()
+        self.current_activity = activity
         self.set_func_model(activity)
         if 'default-currency' in element.attrib:
             activity.default_currency = self.cached_db_call(models.Currency, element.attrib.get('default-currency'))
@@ -216,7 +239,7 @@ class Parse(XMLParser):
         model.iati_identifier = element.text
         self.iati_identifier = element.text
         iati_identifier = element.text
-        print 'saved activity with identifier '+element.text
+        #print 'saved activity with identifier '+element.text
         iati_identifier = iati_identifier.strip(' \t\n\r')
         activity_id = iati_identifier.replace("/", "-")
         activity_id = activity_id.replace(":", "-")
@@ -237,7 +260,8 @@ class Parse(XMLParser):
         if 'secondary-reporter' in element.attrib:
             model.secondary_publisher = element.attrib.get('secondary-reporter')
         #print organisation.name
-
+        if element.attrib.get('ref') in settings.ROOT_ORGANISATIONS:
+            model.is_searchable = True
         model.reporting_organisation = organisation
         self.set_func_model(organisation)
     
@@ -1077,6 +1101,30 @@ class Parse(XMLParser):
         model = self.get_func_parent_model()
         model.provider_activity = element.attrib.get('provider-activity-id')
 
+        if len(settings.ROOT_ORGANISATIONS) > 0:
+            print 'in check searchable'
+            print settings.ROOT_ORGANISATIONS
+            #check if this activty is to be searchable 
+            #first check if this is root element
+            if self.current_activity.is_searchable != True and self.current_activity.reporting_organisation.original_ref in settings.ROOT_ORGANISATIONS :
+                self.current_activity.is_searchable = True
+
+            #check if one of parents is searchable (because then current is also searchable)
+            if self.current_activity.is_searchable != True and models.Activity.objects.filter(iati_identifier=element.attrib.get('provider-activity-id')).exists():
+                parent_activity = models.Activity.objects.get(iati_identifier=element.attrib.get('provider-activity-id'))
+                if parent_activity.is_searchable == True:
+                    self.current_activity.is_searchable = True
+
+            if self.current_activity.is_searchable == True and self.current_activity.iati_identifier not in self.searchable_activities:
+                # update all children
+
+                self.set_children_readable(self.current_activity.iati_identifier)
+
+
+            self.searchable_activities.append(self.current_activity.iati_identifier)
+
+                
+                
         provider_org = self.add_organisation(element)
         transaction_provider = models.TransactionProvider()
         transaction_provider.transaction = model
@@ -1094,6 +1142,7 @@ class Parse(XMLParser):
 
         return element
 
+
     '''atributes:
     receiver-activity-id:AA-AAA-123456789-1234
     ref:AA-AAA-123456789
@@ -1102,6 +1151,10 @@ class Parse(XMLParser):
     def iati_activities__iati_activity__transaction__receiver_org(self,element):
         model = self.get_func_parent_model()
         model.receiver_activity = element.attrib.get('receiver-activity-id')
+
+
+
+
 
         receiver_org = self.add_organisation(element)
         model.receiver_organisation = receiver_org

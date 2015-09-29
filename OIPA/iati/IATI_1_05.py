@@ -1,5 +1,7 @@
 from IATI_2_01 import Parse as IATI_201_Parser
 from iati import models
+from django.conf import settings
+
 
 class Parse(IATI_201_Parser):
 
@@ -160,7 +162,7 @@ class Parse(IATI_201_Parser):
     def iati_activities__iati_activity__participating_org(self,element):
         model = self.get_func_parent_model()
         org = self.add_organisation(element)
-        print org.code + ' is the organisation code'
+        #print org.code + ' is the organisation code'
         activityParticipatingOrganisation = models.ActivityParticipatingOrganisation()
         activityParticipatingOrganisation.organisation = org
         activityParticipatingOrganisation.activity = model
@@ -211,7 +213,7 @@ class Parse(IATI_201_Parser):
 
     tag:sector'''
     def iati_activities__iati_activity__sector(self,element):
-        print 'in sector!!!!!'
+        #print 'in sector!!!!!'
         model = self.get_func_parent_model()
         activity_sector = models.ActivitySector()
         activity_sector.activity = model
@@ -226,7 +228,7 @@ class Parse(IATI_201_Parser):
         activity_sector.vocabulary_id = vocabulary_id
         activity_sector.percentage =  element.attrib.get('percentage')
         activity_sector.save()
-        print 'before sector!!!!!'
+        #print 'before sector!!!!!'
         return element
 
     '''atributes:
@@ -277,6 +279,30 @@ class Parse(IATI_201_Parser):
     def iati_activities__iati_activity__transaction__provider_org(self, element):
         model = self.get_func_parent_model()
         model.provider_activity_id = element.attrib.get('provider-activity-id')
+        if element.attrib.get('ref') in settings.ROOT_ORGANISATIONS:
+            self.current_activity.is_searchable = True
+        if len(settings.ROOT_ORGANISATIONS) > 0:
+            print 'in check searchable'
+            print settings.ROOT_ORGANISATIONS
+            #check if this activty is to be searchable 
+            #first check if this is root element
+            if self.current_activity.is_searchable != True and self.current_activity.reporting_organisation.original_ref in settings.ROOT_ORGANISATIONS :
+                self.current_activity.is_searchable = True
+
+            #check if one of parents is searchable (because then current is also searchable)
+            if self.current_activity.is_searchable != True and models.Activity.objects.filter(iati_identifier=element.attrib.get('provider-activity-id')).exists():
+                parent_activity = models.Activity.objects.get(iati_identifier=element.attrib.get('provider-activity-id'))
+                if parent_activity.is_searchable == True:
+                    self.current_activity.is_searchable = True
+
+            if self.current_activity.is_searchable == True and self.current_activity.iati_identifier not in self.searchable_activities:
+                # update all children
+
+                self.set_children_readable(self.current_activity.iati_identifier)
+
+
+            self.searchable_activities.append(self.current_activity.iati_identifier)
+
         provider_org = self.add_organisation(element)
         transaction_provider = models.TransactionProvider()
         transaction_provider.organisation = provider_org
