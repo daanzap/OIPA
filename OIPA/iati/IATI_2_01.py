@@ -50,6 +50,7 @@ class Parse(XMLParser):
 
 
 
+
     def validate_date(self, unvalidated_date):
         valid_date = None
         if unvalidated_date:
@@ -85,19 +86,37 @@ class Parse(XMLParser):
                 return None
         return valid_date
 
+
+
+    """ 
+        Set all activities to searchable if the reporting org is in the settings.ROOT_ORGANISATIONS list
+
+    """
+    def update_searchable(self):
+
+        activities = models.Activity.objects.filter(reporting_organisation_id__in=settings.ROOT_ORGANISATIONS)
+        for activity in activities:
+            activity.is_searchable = True
+            activity.save()
+            self.set_children_readable(activity.iati_identifier)
+
+
+
     """
         sets all the children to searchable 
         recursivly calls itself but keeps a list of already set activities
     """
     def set_children_readable(self,iati_identifier):
-        print 'in set children readable '+iati_identifier
+        #print 'in set children readable '+iati_identifier
+
         child_transactions = models.Transaction.objects.filter(provider_activity_id=iati_identifier)
         for transaction in child_transactions:
             if not transaction.activity_id in self.searchable_activities:
-                print activity.id+'  is id in set searchable'
+               
                 activity =  transaction.activity
                 activity.is_searchable = True
                 activity.save()
+                self.searchable_activities.append(activity.iati_identifier)
                 self.set_children_readable(activity.iati_identifier)
         return
 
