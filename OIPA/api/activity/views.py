@@ -445,12 +445,14 @@ class ActivityList(ListAPIView):
     - `commitment`: Calculate total commitment of activities presented in
         filtered activities list.
 
+    For more advanced aggregations please use the /activities/aggregations endpoint.
+
     ## Searching
 
     API request may include `q` parameter. This parameter controls searching
     and contains expected value.
 
-    Searching is performed on fields:
+    By default, searching is performed on fields:
 
     - `activity_id`
     - `title`
@@ -461,6 +463,9 @@ class ActivityList(ListAPIView):
     - `sector`
     - `documentlink_title`
     - `participating_org`
+
+    To search on  subset of these fields the `q_fields' parameter can be used. Example;
+    `q_fields=activity_id,title,description'
 
     ## Result details
 
