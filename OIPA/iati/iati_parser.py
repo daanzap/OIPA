@@ -1,6 +1,7 @@
 from IATI_2_01 import Parse as IATI_201_Parser
 from IATI_1_05 import Parse as IATI_105_Parser
 from IATI_1_03 import Parse as IATI_103_Parser
+from organisation.organisation_2_01 import Parse as Org_2_01_Parser
 from deleter import Deleter
 import gc
 from iati.filegrabber import FileGrabber
@@ -52,37 +53,44 @@ class ParseIATI():
 
             if iati_file:
 
-                # delete old activities
-                try:
-                    deleter = Deleter()
-                    deleter.delete_by_source(xml_source_ref)
-                except Exception as e:
-                    exception_handler(e, "parse url", "delete by source")
-                print 'activities deleted'
-                # parse the new file
-                data = iati_file.read()
-                print 'test does it go here?'
-                #print data
-                print 'iati data is'
-                root = etree.fromstring(str(data))
-                parser = None
-                print root.xpath('@version')
-                print self.return_first_exist(root.xpath('@version'))
-                iati_version = root.xpath('@version')[0]
-                iati_identifier = root.xpath('iati-activity/iati-identifier/text()')[0]
+                if source.type == 1:
+                    # activity file
+                    # delete old activities
+                    try:
+                        deleter = Deleter()
+                        deleter.delete_by_source(xml_source_ref)
+                    except Exception as e:
+                        exception_handler(e, "parse url", "delete by source")
+                    # parse the new file
+                    data = iati_file.read()
+                    #print data
+                    root = etree.fromstring(str(data))
+                    parser = None
+                    iati_version = root.xpath('@version')[0]
+                    iati_identifier = root.xpath('iati-activity/iati-identifier/text()')[0]
 
-                if iati_version == '2.01':
-                    parser = IATI_201_Parser()
-                elif iati_version == '1.03':
-                    parser = IATI_103_Parser()
-                    parser.VERSION = iati_version
-                else:
-                    parser = IATI_105_Parser()
-                    parser.VERSION = iati_version
-                print 'before parsing'
-                parser.iati_identifier = iati_identifier
-                parser.iati_source = source
-                parser.load_and_parse(root)
+                    if iati_version == '2.01':
+                        parser = IATI_201_Parser()
+                    elif iati_version == '1.03':
+                        parser = IATI_103_Parser()
+                        parser.VERSION = iati_version
+                    else:
+                        parser = IATI_105_Parser()
+                        parser.VERSION = iati_version
+                    print 'before parsing'
+                    parser.iati_identifier = iati_identifier
+                    parser.iati_source = source
+                    parser.load_and_parse(root)
+                elif source.type == 2:
+                    #organisation file
+                    print 'organisation file!!'
+                    data = iati_file.read()
+                    
+                    root = etree.fromstring(str(data))
+                    iati_version = root.xpath('@version')[0]
+                    parser = Org_2_01_Parser()
+                    parser.iati_source =  source
+                    parser.load_and_parse(root)
 
                 del iati_file
                 gc.collect()

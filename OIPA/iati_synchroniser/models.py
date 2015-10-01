@@ -74,8 +74,10 @@ class IatiXmlSource(models.Model):
 
     def process(self):
         self.is_parsed = True
+        #if self.type == 1:
         parser = ParseIATI()
         parser.parse_url(self)
+
         self.date_updated = datetime.datetime.now()
         self.save(process=False)
         from iati_synchroniser.parse_admin import ParseAdmin
@@ -94,6 +96,9 @@ class IatiXmlSource(models.Model):
         deleter = Deleter()
         deleter.delete_by_source(self.source_url)
         super(IatiXmlSource, self).delete()
+
+
+
 
 
 class Codelist(models.Model):
