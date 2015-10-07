@@ -33,6 +33,9 @@ class Parse(IATI_201_Parser):
         'CG': 10
     }
 
+    def __init__(self):
+        super(IATI_201_Parser, self).__init__()
+
     def add_narrative_105(self, text, parent):
         if text == '' or text is None:
             return

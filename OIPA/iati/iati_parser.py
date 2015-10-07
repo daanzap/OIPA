@@ -2,6 +2,8 @@ from IATI_2_01 import Parse as IATI_201_Parser
 from IATI_1_05 import Parse as IATI_105_Parser
 from IATI_1_03 import Parse as IATI_103_Parser
 from organisation.organisation_2_01 import Parse as Org_2_01_Parser
+from organisation.organisation_1_05 import Parse as Org_1_05_Parser
+
 from deleter import Deleter
 import gc
 from iati.filegrabber import FileGrabber
@@ -88,8 +90,11 @@ class ParseIATI():
                     
                     root = etree.fromstring(str(data))
                     iati_version = root.xpath('@version')[0]
-                    parser = Org_2_01_Parser()
-                    parser.iati_source =  source
+                    if iati_version == '2.01':
+                        parser = Org_2_01_Parser()
+                    else:
+                        parser = Org_1_05_Parser()
+                    parser.set_source(source)
                     parser.load_and_parse(root)
 
                 del iati_file

@@ -29,7 +29,14 @@ class XMLParser(object):
 
     DB_CACHE_LIMIT = 30 #overwrite in subclass if you want more/less 
 
-
+    def __init__(self):
+        self.hints = []
+        self.logged_functions = []
+        self.errors = []
+    
+    def set_source(self,source):
+        print 'in set source!!!!!'
+        self.iati_source = source
    
     def validate_date(self, unvalidated_date):
         valid_date = None
@@ -89,6 +96,7 @@ class XMLParser(object):
         hintsStr = ''
         errorStr = ''
         send_mail = False
+        print 'hints size = '+str(len(self.hints))
         print 'before sending mail'
         if len(self.hints) > 0:
             hintsStr = "function that are missing:"
@@ -98,6 +106,7 @@ class XMLParser(object):
             errorStr = hintsStr+"\n\n errors found:\n"
             errorStr += "\n".join( self.errors)
             send_mail = True
+
 
         if(send_mail):
             print 'sending mail'

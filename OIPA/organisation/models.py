@@ -65,26 +65,27 @@ class ReportingOrg(models.Model):
 
 #budgetLine
 class BudgetLine(models.Model):
-	content_type = models.ForeignKey(
+    content_type = models.ForeignKey(
         ContentType,
         verbose_name='xml Parent',
         null=True,
         blank=True,
     )
-   	object_id = models.CharField(
+    object_id = models.CharField(
         max_length=250,
         verbose_name='related object',
         null=True,
     )
-   	parent_object = GenericForeignKey('content_type', 'object_id')
-   	language = models.ForeignKey(Language, null=True, default=None)
-   	ref = models.CharField(max_length=150,primary_key=True)
-   	currency = models.ForeignKey(Currency,null=True)
-	value = models.DecimalField(max_digits=12, decimal_places=2, null=True, default=None)
-	narratives = GenericRelation(Narrative)
+    parent_object = GenericForeignKey('content_type', 'object_id')
+    organisation_identifier = models.CharField(max_length=150,verbose_name='iati_identifier',null=True)
+    language = models.ForeignKey(Language, null=True, default=None)
+    ref = models.CharField(max_length=150,primary_key=True)
+    currency = models.ForeignKey(Currency,null=True)
+    value = models.DecimalField(max_digits=12, decimal_places=2, null=True, default=None)
+    narratives = GenericRelation(Narrative)
     
-	def get_absolute_url(self):
-		return make_abs_url(self.organisation_identifier)
+    def get_absolute_url(self):
+	   return make_abs_url(self.organisation_identifier)
 
 
 

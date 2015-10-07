@@ -220,10 +220,11 @@ class CodeListImporter():
         self.fast_iter(context2, self.add_code_list_item)
 
     def loop_through_codelists(self, version):
+        print  "http://iatistandard.org/"+ version.replace('.','') +"/codelists/downloads/clv1/codelist.xml"
         downloaded_xml = urllib2.Request(
             "http://iatistandard.org/"
             + version.replace('.','') +
-            "/codelists/downloads/clv2/codelist.xml")
+            "/codelists/downloads/clv1/codelist.xml")
 
         file_opener = urllib2.build_opener()
         xml_file = file_opener.open(downloaded_xml)

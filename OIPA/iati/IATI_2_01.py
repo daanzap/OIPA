@@ -21,8 +21,9 @@ class Parse(XMLParser):
     current_transaction = None
     searchable_activities = []
 
-    def __init__(self, *args, **kwargs):
-        self.test = 'blabla'
+    def __init__(self):
+        super(XMLParser, self).__init__()
+
 
     def _slugify(self,value):
         """
