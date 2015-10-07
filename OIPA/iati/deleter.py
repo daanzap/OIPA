@@ -2,9 +2,25 @@ __author__ = 'vincentvantwestende'
 
 import iati.models as models
 from iati_synchroniser.exception_handler import exception_handler
+import organisation.models as org_models
 
 
 class Deleter():
+
+    def delete_all_organisations(self):
+        org_models.Narrative.objects.all().delete()
+        org_models.BudgetLine.objects.all().delete()
+        org_models.Name.objects.all().delete()
+        org_models.ReportingOrg.objects.all().delete()
+        org_models.TotalBudget.objects.all().delete()
+        org_models.RecipientOrgBudget.objects.all().delete() 
+        org_models.DocumentLinkTitle.objects.all().delete()
+        org_models.DocumentLink.objects.all().delete()
+
+
+        org_models.Organisation.objects.all().delete()
+
+
 
     def delete_by_source(self, xml_source_ref):
         try:

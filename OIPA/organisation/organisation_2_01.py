@@ -27,7 +27,7 @@ class Parse(XMLParser):
             return
         narrative.language = self.cached_db_call(models.Language,lang)
         narrative.content = element.text
-        narrative.iati_identifier = self.iati_identifier
+        narrative.organisation_identifier = self.organisation_identifier
         narrative.parent_object = parent
         narrative.save()
 
@@ -44,11 +44,18 @@ class Parse(XMLParser):
     found in https://raw.githubusercontent.com/IATI/IATI-Extra-Documentation/version-2.01/en/organisation-standard/organisation-standard-example-annotated.xml at line 6 iati_version =2.01'''
     def iati_organisations__iati_organisation(self,element):
         organisation = Organisation()
-        organisation.organisation_identifier = element.xpath('iati-identifier/text()')[0]
+        organisation.organisation_identifier = element.xpath('organisation-identifier/text()')[0]
+        self.organisation_identifier = organisation.organisation_identifier
+        organisation.code = self.organisation_identifier
         organisation.last_updated_datetime = self.validate_date(element.attrib.get('last_updated_datetime'))
         if '{http://www.w3.org/XML/1998/namespace}lang' in element.attrib:
             organisation.default_lang = element.attrib['{http://www.w3.org/XML/1998/namespace}lang']
+        organisation.iati_version_id = self.cached_db_call_no_version(models.Version, self.VERSION,createNew = True)
+
         organisation.save()
+        # add to reporting organisation and recipient_organisation
+        RecipientOrgBudget.objects.filter(recipient_org_identifier=self.organisation_identifier).update(recipient_org=organisation)
+        ReportingOrg.objects.filter(reporting_org_identifier=self.organisation_identifier).update(reporting_org=organisation)
         self.set_func_model(organisation)
         #store element
         return element
@@ -169,7 +176,7 @@ class Parse(XMLParser):
     found in https://raw.githubusercontent.com/IATI/IATI-Extra-Documentation/version-2.01/en/organisation-standard/organisation-standard-example-annotated.xml at line 26 iati_version =2.01'''
     def iati_organisations__iati_organisation__total_budget__value(self,element):
         model = self.get_func_parent_model()
-        model.currency = self.cached_db_call(models.Currency, element.attrib.get('currency'))
+        model.currency = self.cached_db_call_no_version(models.Currency, element.attrib.get('currency'))
         model.value = element.attrib.get('value')
         #store element
         return element
@@ -198,7 +205,7 @@ class Parse(XMLParser):
     found in https://raw.githubusercontent.com/IATI/IATI-Extra-Documentation/version-2.01/en/organisation-standard/organisation-standard-example-annotated.xml at line 28 iati_version =2.01'''
     def iati_organisations__iati_organisation__total_budget__budget_line__value(self,element):
         model = self.get_func_parent_model()
-        model.currency = self.cached_db_call(models.Currency, element.attrib.get('currency'))
+        model.currency = self.cached_db_call_no_version(models.Currency, element.attrib.get('currency'))
         model.value = element.attrib.get('value')
         #store element
         return element
@@ -210,7 +217,7 @@ class Parse(XMLParser):
     found in https://raw.githubusercontent.com/IATI/IATI-Extra-Documentation/version-2.01/en/organisation-standard/organisation-standard-example-annotated.xml at line 29 iati_version =2.01'''
     def iati_organisations__iati_organisation__total_budget__budget_line__narrative(self,element):
         model = self.get_func_parent_model()
-        self.add_narrative(model)
+        self.add_narrative(element,model)
         #store element
         return element
 
@@ -235,7 +242,9 @@ class Parse(XMLParser):
     found in https://raw.githubusercontent.com/IATI/IATI-Extra-Documentation/version-2.01/en/organisation-standard/organisation-standard-example-annotated.xml at line 35 iati_version =2.01'''
     def iati_organisations__iati_organisation__recipient_org_budget__recipient_org(self,element):
         model = self.get_func_parent_model()
-        model.recipient_org = element.attrib.get('ref')
+        model.recipient_org_identifier = element.attrib.get('ref')
+        if Organisation.objects.filter(code=element.attrib.get('ref')).exists():
+            model.recipient_org = Organisation.objects.get(pk=element.attrib.get('ref'))
 
         #store element
         return element
@@ -247,7 +256,7 @@ class Parse(XMLParser):
     found in https://raw.githubusercontent.com/IATI/IATI-Extra-Documentation/version-2.01/en/organisation-standard/organisation-standard-example-annotated.xml at line 36 iati_version =2.01'''
     def iati_organisations__iati_organisation__recipient_org_budget__recipient_org__narrative(self,element):
         model = self.get_func_parent_model()
-        self.add_narrative(model)
+        self.add_narrative(element,model)
         #store element
         return element
 
@@ -285,7 +294,7 @@ class Parse(XMLParser):
     found in https://raw.githubusercontent.com/IATI/IATI-Extra-Documentation/version-2.01/en/organisation-standard/organisation-standard-example-annotated.xml at line 40 iati_version =2.01'''
     def iati_organisations__iati_organisation__recipient_org_budget__value(self,element):
         model = self.get_func_parent_model()
-        model.currency = self.cached_db_call(models.Currency, element.attrib.get('currency'))
+        model.currency = self.cached_db_call_no_version(models.Currency, element.attrib.get('currency'))
         model.value = element.attrib.get('value')
         #store element
         return element
@@ -314,7 +323,7 @@ class Parse(XMLParser):
     found in https://raw.githubusercontent.com/IATI/IATI-Extra-Documentation/version-2.01/en/organisation-standard/organisation-standard-example-annotated.xml at line 42 iati_version =2.01'''
     def iati_organisations__iati_organisation__recipient_org_budget__budget_line__value(self,element):
         model = self.get_func_parent_model()
-        model.currency = self.cached_db_call(models.Currency, element.attrib.get('currency'))
+        model.currency = self.cached_db_call_no_version(models.Currency, element.attrib.get('currency'))
         model.value = element.attrib.get('value')
         #store element
         return element
@@ -326,7 +335,7 @@ class Parse(XMLParser):
     found in https://raw.githubusercontent.com/IATI/IATI-Extra-Documentation/version-2.01/en/organisation-standard/organisation-standard-example-annotated.xml at line 43 iati_version =2.01'''
     def iati_organisations__iati_organisation__recipient_org_budget__budget_line__narrative(self,element):
         model = self.get_func_parent_model()
-        self.add_narrative(model)
+        self.add_narrative(element,model)
         #store element
         return element
 
@@ -389,7 +398,7 @@ class Parse(XMLParser):
     found in https://raw.githubusercontent.com/IATI/IATI-Extra-Documentation/version-2.01/en/organisation-standard/organisation-standard-example-annotated.xml at line 52 iati_version =2.01'''
     def iati_organisations__iati_organisation__recipient_country_budget__value(self,element):
         model = self.get_func_parent_model()
-        model.currency = self.cached_db_call(models.Currency, element.attrib.get('currency'))
+        model.currency = self.cached_db_call_no_version(models.Currency, element.attrib.get('currency'))
         model.value = element.attrib.get('value')
         #store element
         return element
@@ -418,7 +427,7 @@ class Parse(XMLParser):
     found in https://raw.githubusercontent.com/IATI/IATI-Extra-Documentation/version-2.01/en/organisation-standard/organisation-standard-example-annotated.xml at line 54 iati_version =2.01'''
     def iati_organisations__iati_organisation__recipient_country_budget__budget_line__value(self,element):
         model = self.get_func_parent_model()
-        model.currency = self.cached_db_call(models.Currency, element.attrib.get('currency'))
+        model.currency = self.cached_db_call_no_version(models.Currency, element.attrib.get('currency'))
         model.value = element.attrib.get('value')
         #store element
         return element
@@ -430,7 +439,7 @@ class Parse(XMLParser):
     found in https://raw.githubusercontent.com/IATI/IATI-Extra-Documentation/version-2.01/en/organisation-standard/organisation-standard-example-annotated.xml at line 55 iati_version =2.01'''
     def iati_organisations__iati_organisation__recipient_country_budget__budget_line__narrative(self,element):
         model = self.get_func_parent_model()
-        self.add_narrative(model)
+        self.add_narrative(element,model)
         #store element
         return element
 
@@ -473,7 +482,7 @@ class Parse(XMLParser):
     found in https://raw.githubusercontent.com/IATI/IATI-Extra-Documentation/version-2.01/en/organisation-standard/organisation-standard-example-annotated.xml at line 62 iati_version =2.01'''
     def iati_organisations__iati_organisation__document_link__title__narrative(self,element):
         model = self.get_func_parent_model()
-        self.add_narrative(model)
+        self.add_narrative(element,model)
         #store element
         return element
 

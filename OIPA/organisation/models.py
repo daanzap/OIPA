@@ -57,10 +57,11 @@ class Name(models.Model):
 
 #reporting organisation (can only be one but needs seperate class for narratives)
 class ReportingOrg(models.Model):
-	organisation = models.ForeignKey(Organisation,related_name='reporting_orgs')
-	org_type = models.ForeignKey(OrganisationType, null=True, default=None)
-	reporting_org = models.ForeignKey(Organisation,related_name='reported_by_orgs',db_constraint=False)
-	secondary_reporter = models.BooleanField(default=False)
+    organisation = models.ForeignKey(Organisation,related_name='reporting_orgs')
+    org_type = models.ForeignKey(OrganisationType, null=True, default=None)
+    reporting_org = models.ForeignKey(Organisation,related_name='reported_by_orgs',null=True, db_constraint=False)
+    reporting_org_identifier = models.CharField(max_length=250,null=True)
+    secondary_reporter = models.BooleanField(default=False)
 
 #budgetLine
 class BudgetLine(models.Model):
@@ -78,7 +79,7 @@ class BudgetLine(models.Model):
    	parent_object = GenericForeignKey('content_type', 'object_id')
    	language = models.ForeignKey(Language, null=True, default=None)
    	ref = models.CharField(max_length=150,primary_key=True)
-   	currency = models.ForeignKey(Currency)
+   	currency = models.ForeignKey(Currency,null=True)
 	value = models.DecimalField(max_digits=12, decimal_places=2, null=True, default=None)
 	narratives = GenericRelation(Narrative)
     
@@ -91,25 +92,26 @@ class TotalBudget(models.Model):
 	organisation = models.ForeignKey(Organisation)
 	period_start = models.DateField(null=True)
 	period_end = models.DateField(null=True)
-	currency = models.ForeignKey(Currency)
+	currency = models.ForeignKey(Currency,null=True)
 	value = models.DecimalField(max_digits=12, decimal_places=2, null=True, default=None)
 	budget_lines = GenericRelation(BudgetLine)
 
 class RecipientOrgBudget(models.Model):
-	organisation = models.ForeignKey(Organisation,related_name='donor_org')
-	recipient_org = models.ForeignKey(Organisation,related_name='recieving_org',db_constraint=False)
-	period_start = models.DateField(null=True)
-	period_end = models.DateField(null=True)
-	currency = models.ForeignKey(Currency)
-	value = models.DecimalField(max_digits=12, decimal_places=2, null=True, default=None)
-	budget_lines = GenericRelation(BudgetLine)
+    organisation = models.ForeignKey(Organisation,related_name='donor_org')
+    recipient_org_identifier = models.CharField(max_length=150,verbose_name='recipient_org_identifier',null=True)
+    recipient_org = models.ForeignKey(Organisation,related_name='recieving_org',db_constraint=False,null=True)
+    period_start = models.DateField(null=True)
+    period_end = models.DateField(null=True)
+    currency = models.ForeignKey(Currency,null=True)
+    value = models.DecimalField(max_digits=12, decimal_places=2, null=True, default=None)
+    budget_lines = GenericRelation(BudgetLine)
 
 class RecipientCountryBudget(models.Model):
 	organisation = models.ForeignKey(Organisation)
-	country = models.ForeignKey(Country)
+	country = models.ForeignKey(Country,null=True)
 	period_start = models.DateField(null=True)
 	period_end = models.DateField(null=True)
-	currency = models.ForeignKey(Currency)
+	currency = models.ForeignKey(Currency,null=True)
 	value = models.DecimalField(max_digits=12, decimal_places=2, null=True, default=None)
 	budget_lines = GenericRelation(BudgetLine)
 
