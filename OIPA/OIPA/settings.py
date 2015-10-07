@@ -150,6 +150,7 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'haystack',
     'iati',
+    'organisation',
     'iati_synchroniser',
     'geodata',
     'indicator',

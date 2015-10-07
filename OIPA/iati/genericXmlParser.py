@@ -1,18 +1,16 @@
 from lxml import etree
 from parse_logger import models as logModels
-from django.db.models import Q
 from django.core.mail import send_mail
-from deleter import Deleter
-import gc
-from iati.filegrabber import FileGrabber
 import datetime
 import inspect
 import traceback
 import re
 from iati_synchroniser.exception_handler import exception_handler
-import re
 from django.contrib.auth.models import User
-import traceback
+import dateutil.parser
+import time
+from re import sub
+
 
 
 
@@ -33,6 +31,42 @@ class XMLParser(object):
 
 
    
+    def validate_date(self, unvalidated_date):
+        valid_date = None
+        if unvalidated_date:
+            unvalidated_date = unvalidated_date.strip(' \t\n\r')
+        else:
+            return None
+        #check if standard data parser works
+        try:
+            return dateutil.parser.parse(unvalidated_date)
+        except:
+            pass
+
+        if unvalidated_date:
+            try:
+                unvalidated_date = unvalidated_date.split("Z")[0]
+                unvalidated_date = sub(r'[\t]', '', unvalidated_date)
+                unvalidated_date = unvalidated_date.replace(" ", "")
+                unvalidated_date = unvalidated_date.replace("/", "-")
+                if len(unvalidated_date) == 4:
+                    unvalidated_date = unvalidated_date + "-01-01"
+                try:
+                    validated_date = time.strptime(unvalidated_date, '%Y-%m-%d')
+                except ValueError:
+                    validated_date = time.strptime(unvalidated_date, '%d-%m-%Y')
+                valid_date = datetime.fromtimestamp(time.mktime(validated_date))
+
+            except ValueError:
+                # if not any(c.isalpha() for c in unvalidated_date):
+                #     exception_handler(None, "validate_date", 'Invalid date: ' + unvalidated_date)
+                return None
+            except Exception as e:
+                exception_handler(e, "validate date", "validate_date")
+                return None
+        return valid_date
+
+
 
     def testWithExampleFile(self):
         self.testWithFile("activity-standard-example-annotated_105.xml")
