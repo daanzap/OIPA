@@ -222,6 +222,7 @@ class ActivityResource(ModelResource):
             'start_actual': ALL,
             'end_planned': ALL,
             'end_actual': ALL,
+            'locations': ALL,
             'total_budget': ALL,
             'sectors': ('exact', 'in'),
             'regions': ('exact', 'in'),

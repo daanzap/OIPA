@@ -114,7 +114,7 @@ class ActivityFilter(TogetherFilterSet):
         lookup_type='in',
         name='xml_source_ref'
     )
-    
+
     activity_status = CommaSeparatedCharFilter(
         lookup_type='in',
         name='activity_status',
